@@ -27,17 +27,13 @@ app.get("/api/hello", function (req, res) {
 // timestamp endpoint
 app.get('/api/timestamp/:date_string?', (req, res) => {
   const dateString = req.params.date_string;
-  let timestamp, unix, utc, json;
+  let timestamp, unix, utc, convertDate, json;
 
   if (!dateString) {
     // if undefined...
     timestamp = new Date();
-    unix = timestamp.getTime();
-    utc = timestamp.toUTCString();
-
-    res.json({"unix": unix, "utc": utc});
   } else {
-    let convertDate = Date.parse(dateString);
+    convertDate = Date.parse(dateString);
 
     // if parsed date is not a number
     if(isNaN(convertDate)) {
@@ -45,32 +41,19 @@ app.get('/api/timestamp/:date_string?', (req, res) => {
     }
 
     timestamp = new Date(convertDate);
-    unix = timestamp.getTime();
-    utc = timestamp.toUTCString();
-
-    if (utc == 'Invalid Date') {
-      json = {"error": utc};
-    } else {
-      json = {"unix": unix, "utc": utc};
-    }
-
-    res.json(json);
-
   }
-  
-  /*const dateString = req.params.date_string;
-  console.log(typeof dateString);
-  const timestamp = dateString ? new Date(dateString) : new Date();
-  const unix = timestamp.getTime();
-  const utc = timestamp.toUTCString();
-    
-  if(utc == 'Invalid Date') {
-    res.json({"error": utc});
+
+  unix = timestamp.getTime();
+  utc = timestamp.toUTCString();
+
+  if (utc == 'Invalid Date') {
+    // if date is invalid, pass an error message
+    json = {"error": utc};
   } else {
-    res.json({"unix": unix, "utc": utc});
-  }*/
-  
-  
+    json = {"unix": unix, "utc": utc};
+  }
+
+  res.json(json);
 });
 
 
